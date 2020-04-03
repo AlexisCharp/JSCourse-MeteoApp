@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {ActivityIndicator, Image, View, Text, StyleSheet, ImageBackground, DatePickerIOS, Platform} from 'react-native';
+import {Image, View, Text, StyleSheet} from 'react-native';
 import Previsions from './Previsions';
 import * as Font from 'expo-font';
+
+// Je n'ai pas réussi à comprendre le fonctionnement de la localisation après plusieurs tentatives...
 // import Constants from 'expo-constants';
 // import * as Location from 'expo-location';
 // import * as Permissions from 'expo-permissions';
 
+//Problème au chargement des typos, cela ne se fait pas de façon asynchrone... l'application fonctionne tout de même mais génère une erreur au démarrage. Il suffit d'enregistrer à nouveau le fichier JSX pour générer l'affichage.
 (async () => {
     await Font.loadAsync({
     'RobotoBold': {
@@ -20,13 +23,14 @@ import * as Font from 'expo-font';
 function Home(props) {
 
     const apikey = 'becfa4eb6b7a49c0838657d82bacaf9d';
-    let city = 'Roma';
+    let city = 'Paris';
     let date = new Date();
     const [hours, setHours] = useState(date.getHours());
     const [minutes, setMinutes] = useState(date.getMinutes());
     const [localisation, setLocalisation] = useState('');
     const [temp, setTemp] = useState('');
     const [desc, setDesc] = useState('');
+    const [icon, setIcon] = useState('../assets/img/settings.png');
     
     useEffect(()=>{
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apikey}&lang=en`)
@@ -35,15 +39,18 @@ function Home(props) {
             setTemp(data.main.temp.toFixed(0) + '°');
             setLocalisation(data.name);
             setDesc(data.weather[0].description);
+            // setIcon('../assets/img/' + data.weather[0].icon.substring(-1) + '.png');
             console.log(data);
+            console.log(icon);
         });
     }, [])
 
     
-
+    // Maj régulière de l'heure + Adaptation de la syntaxe pour un affichage clair
     setInterval(() => {
         date = new Date();
         if(date.getHours() < 10){
+            // J'ajoute un 0 afin d'obtenir "01" plutôt que "1"
             setHours('0' + date.getHours());
         } else {
             setHours(date.getHours());
@@ -64,10 +71,10 @@ function Home(props) {
             </View>
             <View style={styles.actualWeather}>
                 <View style={{width: 100}}>
-                    <Image style={{width: 100, height: 100}} source={require('../assets/img/littleRain.png')}/>
+                    <Image style={{width: 100, height: 100}} source={require(icon)}/>
                 </View>
                 <View style={{width:100}}>
-                    {/* <Text style={{width: 100, fontSize:30, color: '#666', textAlign: 'center', fontFamily : 'RobotoBold'}}>...</Text> */}
+                    <Text style={{width: 100, fontSize:30, color: '#666', textAlign: 'center', fontFamily : 'RobotoBold'}}>...</Text>
                     <Text style={{width: 100, fontSize:20, textAlign: 'center', fontFamily : 'RobotoLight'}}>{hours}:{minutes}</Text>
                 </View>
                 <Text style={{width: 100, fontSize:50, textAlign: 'center', fontFamily : 'RobotoBold'}}>{temp}</Text>
