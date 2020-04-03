@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {View, StyleSheet, Text, Image} from "react-native";
 import * as Font from "expo-font";
 
-
+//Pareil, la typo marche pas
 async () => {
   await Font.loadAsync({
     RobotoBold: {
@@ -19,9 +19,13 @@ function Previsions(props) {
 
 
   //Déclaration des states
+  const IMAGES = props.IMAGES;
   const [temp0, setTemp0] = useState(''); 
+  const [icon0, setIcon0] = useState('');
   const [temp1, setTemp1] = useState(''); 
+  const [icon1, setIcon1] = useState('');
   const [temp2, setTemp2] = useState(''); 
+  const [icon2, setIcon2] = useState('');
 
   const apikey = "becfa4eb6b7a49c0838657d82bacaf9d";
   // Je déclare un tableau avec le nom des jours
@@ -59,13 +63,19 @@ function Previsions(props) {
           if(nextDayDate.getHours() > 11 && nextDayDate.getHours() < 15){
             // On récupère cette nouvelle date
             dateDate = nextDayDate.getDate();
-            //On stocke la température "moyenne" de la journée
+            //On stocke la température "moyenne" de la journée et l'icone correspondant
             if(day === 0){
               setTemp0(data.list[i].main.temp.toFixed(0) + '°');
+              let imageRef = data.list[i].weather[0].icon.substring(0,2) + 'd';
+              setIcon0(IMAGES[imageRef]);
             } else if (day === 1) {
               setTemp1(data.list[i].main.temp.toFixed(0) + '°');
+              let imageRef = data.list[i].weather[0].icon.substring(0,2) + 'd';
+              setIcon1(IMAGES[imageRef]);
             } else if (day === 2){
               setTemp2(data.list[i].main.temp.toFixed(0) + '°');
+              let imageRef = data.list[i].weather[0].icon.substring(0,2) + 'd';
+              setIcon2(IMAGES[imageRef]);
             }
             // On passe au jour suivant
             day += 1;
@@ -82,7 +92,7 @@ function Previsions(props) {
       <Image style={{
           width: 50,
           height: 50
-        }} source={require("../assets/img/littleRain.png")}/>
+        }} source={icon0}/>
       <Text style={styles.futureWeatherTemp}>{temp0}</Text>
     </View>
     <View style={styles.futureWeatherDiv}>
@@ -90,7 +100,7 @@ function Previsions(props) {
       <Image style={{
           width: 50,
           height: 50
-        }} source={require("../assets/img/littleRain.png")}/>
+        }} source={icon1}/>
       <Text style={styles.futureWeatherTemp}>{temp1}</Text>
     </View>
     <View style={styles.futureWeatherDiv}>
@@ -98,7 +108,7 @@ function Previsions(props) {
       <Image style={{
           width: 50,
           height: 50
-        }} source={require("../assets/img/littleRain.png")}/>
+        }} source={icon2}/>
       <Text style={styles.futureWeatherTemp}>{temp2}</Text>
     </View>
   </View>);

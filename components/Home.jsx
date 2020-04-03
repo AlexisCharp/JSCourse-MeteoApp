@@ -8,20 +8,23 @@ import * as Font from 'expo-font';
 // import * as Location from 'expo-location';
 // import * as Permissions from 'expo-permissions';
 
-//Problème au chargement des typos, cela ne se fait pas de façon asynchrone... l'application fonctionne tout de même mais génère une erreur au démarrage. Il suffit d'enregistrer à nouveau le fichier JSX pour générer l'affichage.
-(async () => {
-    await Font.loadAsync({
-    'RobotoBold': {
-        uri: require('../assets/fonts/RobotoBold.ttf'),
-    },
-    'RobotoLight': {
-        uri: require('../assets/fonts/RobotoLight.ttf'),
-    }
-})
-})
+//Problème au chargement des typos, cela ne se fait pas... l'application fonctionne tout de même mais génère une erreur au démarrage. Il suffit d'enregistrer à nouveau le fichier JSX pour générer l'affichage.
+// async () => {
+//     await Font.loadAsync({
+//     'RobotoBold': {
+//         uri: require('../assets/fonts/RobotoBold.ttf'),
+//     },
+//     'RobotoLight': {
+//         uri: require('../assets/fonts/RobotoLight.ttf'),
+//     }
+// })
+// }
+
+//Chargement des pictos
+
 
 function Home(props) {
-
+    
     const apikey = 'becfa4eb6b7a49c0838657d82bacaf9d';
     let city = 'Paris';
     let date = new Date();
@@ -31,6 +34,17 @@ function Home(props) {
     const [temp, setTemp] = useState('');
     const [desc, setDesc] = useState('');
     const [icon, setIcon] = useState('../assets/img/settings.png');
+    const IMAGES = {
+        '01d' : require('../assets/img/01d.png'),
+        '02d' : require('../assets/img/02d.png'),
+        '03d' : require('../assets/img/03d.png'),
+        '04d' : require('../assets/img/04d.png'),
+        '09d' : require('../assets/img/09d.png'),
+        '10d' : require('../assets/img/10d.png'),
+        '11d' : require('../assets/img/11d.png'),
+        '13d' : require('../assets/img/13d.png'),
+        '50d' : require('../assets/img/50d.png'),
+    };
     
     useEffect(()=>{
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apikey}&lang=en`)
@@ -39,9 +53,11 @@ function Home(props) {
             setTemp(data.main.temp.toFixed(0) + '°');
             setLocalisation(data.name);
             setDesc(data.weather[0].description);
-            // setIcon('../assets/img/' + data.weather[0].icon.substring(-1) + '.png');
+            //Je n'ai pas prévu les images de nuit, pure flemme :)
+            let imageRef = data.weather[0].icon.substring(0,2) + 'd';
+            setIcon(IMAGES[imageRef]);
             console.log(data);
-            console.log(icon);
+            console.log(imageRef)
         });
     }, [])
 
@@ -71,7 +87,7 @@ function Home(props) {
             </View>
             <View style={styles.actualWeather}>
                 <View style={{width: 100}}>
-                    <Image style={{width: 100, height: 100}} source={require(icon)}/>
+                    <Image style={{width: 100, height: 100}} source={icon}/>
                 </View>
                 <View style={{width:100}}>
                     <Text style={{width: 100, fontSize:30, color: '#666', textAlign: 'center', fontFamily : 'RobotoBold'}}>...</Text>
@@ -83,7 +99,7 @@ function Home(props) {
                 <Text style={{textTransform: 'uppercase', fontFamily: 'RobotoLight'}}>The weather now is</Text>
                 <Text style={styles.weatherIsText}>{desc}</Text>
             </View>
-            <Previsions city={city}></Previsions>
+            <Previsions city={city} IMAGES={IMAGES}></Previsions>
         </View >
     );
 }
